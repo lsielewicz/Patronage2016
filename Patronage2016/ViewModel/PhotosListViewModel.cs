@@ -22,38 +22,30 @@ namespace Patronage2016.ViewModel
 {
     public class PhotosListViewModel : ViewModelBase
     {
-        private List<BitmapImage> bitmapList;
-        private List<string> pathesList;
+        private List<PictureFile> picturesList;
         private Navigation.NavigationService _nav = new Navigation.NavigationService();
         private ObservableCollection<GalleryModel> galleryCollection;
 
 
         public PhotosListViewModel()
         {
-
-            Messenger.Default.Register<PassedData>(this,x=>HandlePassedData(x.BitMapList, x.Pathes));
+            Messenger.Default.Register<PassedData>(this,x=>HandlePassedData(x.PictureInformations));
             GoBackCommand = new RelayCommand(GoBack);
             SelectedItemCommand=new RelayCommand<string>(SelectedItem);
             galleryCollection=new ObservableCollection<GalleryModel>();
             
         }
 
-        private void HandlePassedData(List<BitmapImage> argBitmap, List<string> argPathes)
+        private void HandlePassedData(List<PictureFile> pics)
         {
-            if(bitmapList!=null && bitmapList.Count >0)
-                bitmapList.Clear();
-            if(pathesList !=null && pathesList.Count >0)
-                pathesList.Clear();
-            this.bitmapList = new List<BitmapImage>(argBitmap);
-            this.pathesList = new List<string>(argPathes);
-
-            if (bitmapList.Count == pathesList.Count)
+            this.picturesList = pics;
+            if (picturesList!=null && picturesList.Count > 0)
             {
                 if (GalleryCollection != null && GalleryCollection.Count > 0)
                     GalleryCollection.Clear();
-                for (int i = 0; i < bitmapList.Count; i++)
+                for (int i = 0; i < picturesList.Count; i++)
                 {
-                    GalleryCollection.Add(new GalleryModel(bitmapList[i],Path.GetFileName(pathesList[i])));
+                    GalleryCollection.Add(new GalleryModel(picturesList[i].FileThumbnail, Path.GetFileName(picturesList[i].FilePath)));
                 }
             }
 
@@ -72,7 +64,7 @@ namespace Patronage2016.ViewModel
 
         private void SelectedItem(string path)
         {
-            int index = pathesList.FindIndex(x => Path.GetFileName(x) == path);
+            int index = picturesList.FindIndex(x => Path.GetFileName(x.FilePath) == path);
             if (index != -1)
             {
                 Messenger.Default.Send<CurrentIndexMessage>(new CurrentIndexMessage(index));

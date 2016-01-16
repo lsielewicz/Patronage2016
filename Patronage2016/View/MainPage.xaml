@@ -10,15 +10,17 @@
     xmlns:converters="using:Patronage2016.Converters"
     mc:Ignorable="d"
     DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
+    x:Name="MainWindow"
     >
-    
     <Page.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </Page.Resources>
-    
-    <Grid x:Name="Grid1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid x:Name="Grid1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
         <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="FirstGridColumn" Width="3*"/>
             <ColumnDefinition x:Name="MainGridColumn" Width="15*"/>
+            <ColumnDefinition x:Name="ThirdGridColumn" Width="10*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" MinHeight="35" />
@@ -27,7 +29,7 @@
             <!--<RowDefinition x:Name="InformationsGridRow" Height="3*" />-->
         </Grid.RowDefinitions>
         
-        <Rectangle Grid.Row="0" Grid.Column="0">
+        <Rectangle Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
             <Rectangle.Fill>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#F79E36" Offset="1" />
@@ -36,17 +38,18 @@
             </Rectangle.Fill>
         </Rectangle>
 
-        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+        <StackPanel x:Name="TitlePanel" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="3">
             <Image x:Name="Logo" Source="ms-appx:///Assets/logo.png" Stretch="None" Margin="0,0,5,0"/>
-            <TextBlock Text="Patronage 2016" 
+            <TextBlock x:Uid="TitleText" Text="Patronage 2016" 
                    VerticalAlignment="Center" 
                    HorizontalAlignment="Center" 
                    FontSize="24" 
                    FontStretch="UltraExpanded" 
                    Foreground="#C6222B" 
-                   FontWeight="Bold"/>
+                   FontWeight="Bold"
+                   x:Name="TitleBlock"/>
         </StackPanel>
-        <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+        <StackPanel x:Name="ButtonsPanel" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" >
             <Button x:Name="GoToPhotosListBtn" Command="{Binding GoToPhotosListCommand}" Margin="5,2,5,2" HorizontalAlignment="Stretch" Padding="0" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                 <Button.Content>
                     <Image x:Name="Galery" Source="ms-appx:///Assets/Picture-64.png" Stretch="Fill" Margin="10,0,10,0"/>
@@ -65,7 +68,7 @@
         </StackPanel>
 
         <ProgressRing x:Name="InitializeProgressRing"
-                      Grid.Column="0" Grid.Row="0" Grid.RowSpan="4"
+                      Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Grid.ColumnSpan="3"
                       Width="80"
                       Height="80"
                       Visibility="{Binding ProgressRingActive, Converter={StaticResource BoolToVisibilityConverter}}"
@@ -75,8 +78,8 @@
                       Foreground="#FAAB23"
                       FontWeight="Bold"
                       />
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" Grid.Row="2">
-            <StackPanel Grid.Row="2" Margin="20,5,20,5">
+        <ScrollViewer x:Name="MainScrollViewer" HorizontalScrollBarVisibility="Auto" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3">
+        <StackPanel x:Name="ImagePanel" Margin="20,5,20,5" >
             <Button x:Name="SwitchImgBtn" 
                         Margin="0" 
                         Padding="0" 
@@ -84,26 +87,106 @@
                         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
                         VerticalAlignment="Stretch" 
                         HorizontalAlignment="Stretch"  
-                        MaxWidth="{Binding ActualWidth, ElementName=MainGridColumn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
-                        MaxHeight="{Binding ActualHeight, ElementName=MainGridRow, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                         >
-                <Viewbox StretchDirection="DownOnly" UseLayoutRounding="True" >
-                    <Image x:Name="Img1" Source="{Binding ImgSource, UpdateSourceTrigger=PropertyChanged}" Stretch="Fill" />
-                </Viewbox>
+<!--                <Viewbox StretchDirection="DownOnly" UseLayoutRounding="True" >-->
+                    <Image x:Name="Img1" Source="{Binding ImgSource, UpdateSourceTrigger=PropertyChanged}" Stretch="None"   />
+               <!-- </Viewbox>-->
+            
             </Button>
             <TextBlock x:Name="Img1TextBox" Text="{Binding InformationsTextBlock, UpdateSourceTrigger=PropertyChanged}"  
                     FontSize="12"
                     Margin="5,5,5,30"
+                    TextWrapping="Wrap"
                     />
         </StackPanel>
         </ScrollViewer>
-<!--        <ScrollViewer HorizontalScrollBarVisibility="Auto" Grid.Row="3">
-            <StackPanel  Margin="1,1,40,20" >
-                <TextBlock x:Name="Img1TextBox" Text="{Binding InformationsTextBlock, UpdateSourceTrigger=PropertyChanged}"  
-                    FontSize="12"
-                    Margin="5,5,5,30"
-                    />
-            </StackPanel>
-        </ScrollViewer>-->
+        
+        
+        
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="WindowsStates">
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="450"/>
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="TitlePanel.(Grid.Row)" Value="0"/>
+                        <Setter Target="TitlePanel.(Grid.Column)" Value="0" />
+                        <Setter Target="TitlePanel.(Grid.ColumnSpan)" Value="3"/>
+                        <Setter Target="ButtonsPanel.(Grid.Row)" Value="1"/>
+                        <Setter Target="ButtonsPanel.(Grid.Column)" Value="0"/>
+                        <Setter Target="ButtonsPanel.(Grid.RowSpan)" Value="2" />
+                        <Setter Target="ButtonsPanel.Orientation" Value="Vertical"/>
+                        <Setter Target="ButtonsPanel.VerticalAlignment" Value="Stretch"/>
+                        <Setter Target="ImagePanel.(Grid.Row)" Value="1"/>
+                        <Setter Target="ImagePanel.(Grid.Column)" Value="1"/>
+                        <Setter Target="ImagePanel.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="ImagePanel.(Grid.RowSpan)" Value="2"/>
+                        <Setter Target="ImagePanel.Orientation" Value="Horizontal"/>
+                        <Setter Target="MainScrollViewer.(Grid.Column)" Value="1"/>
+                        <Setter Target="MainScrollViewer.(Grid.Row)" Value="1"/>
+                        <Setter Target="MainScrollViewer.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="MainScrollViewer.(Grid.RowSpan)" Value="2"/>
+                        <Setter Target="GoToPhotosListBtn.Margin" Value="0,5,0,5" />
+                        <Setter Target="TakePhotoBtn.Margin" Value="0,5,0,5" />
+                        <Setter Target="ShareBtn.Margin" Value="0,5,0,5" />
+                        <Setter Target="Img1TextBox.FontSize" Value="12"/>
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="WidePhoneState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="TitlePanel.(Grid.Row)" Value="0"/>
+                        <Setter Target="TitlePanel.(Grid.Column)" Value="0" />
+                        <Setter Target="TitlePanel.(Grid.ColumnSpan)" Value="3"/>
+                        <Setter Target="ButtonsPanel.(Grid.Row)" Value="1"/>
+                        <Setter Target="ButtonsPanel.(Grid.Column)" Value="0"/>
+                        <Setter Target="ButtonsPanel.(Grid.ColumnSpan)" Value="3" />
+                        <Setter Target="ButtonsPanel.Orientation" Value="Horizontal"/>
+                        <Setter Target="ImagePanel.(Grid.Row)" Value="2"/>
+                        <Setter Target="ImagePanel.(Grid.Column)" Value="0"/>
+                        <Setter Target="ImagePanel.(Grid.ColumnSpan)" Value="3"/>
+                        <Setter Target="ImagePanel.Orientation" Value="Vertical"/>
+                        <Setter Target="MainScrollViewer.(Grid.Column)" Value="1"/>
+                        <Setter Target="MainScrollViewer.(Grid.Row)" Value="2"/>
+                        <Setter Target="MainScrollViewer.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="MainScrollViewer.(Grid.RowSpan)" Value="2"/>
+                        <Setter Target="Img1.MaxWidth" Value="280"/>
+                    </VisualState.Setters>
+                </VisualState>
+                
+
+                <VisualState x:Name="WideDesktopState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="800"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="TitlePanel.(Grid.Row)" Value="0"/>
+                        <Setter Target="TitlePanel.(Grid.Column)" Value="0" />
+                        <Setter Target="TitlePanel.(Grid.ColumnSpan)" Value="3"/>
+                        <Setter Target="TitleBlock.FontSize" Value="40" />
+                        <Setter Target="ButtonsPanel.(Grid.Row)" Value="1"/>
+                        <Setter Target="ButtonsPanel.(Grid.Column)" Value="0"/>
+                        <Setter Target="ButtonsPanel.(Grid.ColumnSpan)" Value="3" />
+                        <Setter Target="ButtonsPanel.Orientation" Value="Horizontal"/>
+                        <Setter Target="ImagePanel.(Grid.Row)" Value="2"/>
+                        <Setter Target="ImagePanel.(Grid.Column)" Value="0"/>
+                        <Setter Target="ImagePanel.(Grid.ColumnSpan)" Value="3"/>
+                        <Setter Target="ImagePanel.Orientation" Value="Vertical"/>
+                        <Setter Target="MainScrollViewer.(Grid.Column)" Value="0"/>
+                        <Setter Target="MainScrollViewer.(Grid.Row)" Value="2"/>
+                        <Setter Target="MainScrollViewer.(Grid.ColumnSpan)" Value="3"/>
+                        <Setter Target="MainScrollViewer.(Grid.RowSpan)" Value="2"/>
+                        <Setter Target="Img1.Width" Value="500"/>
+                        <Setter Target="Img1.Stretch" Value="Fill"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

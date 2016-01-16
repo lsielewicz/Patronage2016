@@ -94,6 +94,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="project.json" />
+    <PRIResource Include="Strings\en\Resources.resw" />
+    <PRIResource Include="Strings\pl\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -102,10 +104,13 @@
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Messages\CurrentIndexMessage.cs" />
     <Compile Include="Model\GalleryModel.cs" />
+    <Compile Include="Model\PictureFile.cs" />
     <Compile Include="Navigation\NavigationService.cs" />
     <Compile Include="Messages\PassedData.cs" />
+    <Compile Include="Strings\LocalString.cs" />
     <Compile Include="Utils\ISupportSharing.cs" />
     <Compile Include="Utils\SharingService.cs" />
+    <Compile Include="ViewModel\MainViewModelPhone.cs" />
     <Compile Include="ViewModel\PhotosListViewModel.cs" />
     <Compile Include="View\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>

@@ -11,10 +11,11 @@
     mc:Ignorable="d"
     DataContext="{Binding Source={StaticResource Locator}, Path=PhotosList}"
     >
-
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MinWidth="80"/>
+            <ColumnDefinition Width="3*" MinWidth="80"/>
+            <ColumnDefinition Width="25*" MinWidth="80"/>
 
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -33,9 +34,10 @@
             </Rectangle.Fill>
         </Rectangle>
 
-        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+        <StackPanel x:Name="TitlePanel" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="2">
             <Image x:Name="Logo" Source="ms-appx:///Assets/logo.png" Stretch="None" Margin="0,0,5,0"/>
-            <TextBlock Text="Patronage 2016" 
+            <TextBlock x:Uid="TitleText" 
+                    Text="Patronage 2016" 
                    VerticalAlignment="Center" 
                    HorizontalAlignment="Center" 
                    FontSize="24" 
@@ -44,15 +46,15 @@
                    FontWeight="Bold"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+        <StackPanel x:Name="ButtonsPanel" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Grid.ColumnSpan="2">
             <Button x:Name="GoBackButton" Margin="5,2,5,2" Command="{Binding GoBackCommand}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="0" >
                 <Button.Content>
                         <Image x:Name="Back" Source="ms-appx:///Assets/Long Arrow Left-64.png" Stretch="Fill" Margin="10,0,10,0"/>
                 </Button.Content>
             </Button>
         </StackPanel>
-        
-        <ScrollViewer Grid.Row="2" Grid.Column="0" Margin="5">
+
+        <ScrollViewer x:Name="GalleryScrollViewer" Grid.Row="2" Grid.Column="0" Margin="5" Grid.ColumnSpan="2">
             <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20,5,20,5" >
                 <GridView x:Name="GridView" ItemsSource="{Binding GalleryCollection}" 
                           IsItemClickEnabled="False"
@@ -76,7 +78,7 @@
                                         >
                                         <Image x:Name="Thumbnail" Source="{Binding Path=Image}" Stretch="None"/>
                                     </Button>
-                                    <TextBlock Text="{Binding Path=ImagePath}" TextWrapping="Wrap" FontSize="8" />
+                                    <TextBlock x:Name="PathBlock" Text="{Binding Path=ImagePath}" TextWrapping="Wrap" FontSize="8" />
                                 </StackPanel>
                             </StackPanel>
                         </DataTemplate>
@@ -84,5 +86,58 @@
                 </GridView>
             </StackPanel>
         </ScrollViewer>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="WindowsStates">
+                <VisualState x:Name="WidePhoneState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ButtonsPanel.(Grid.Row)" Value="1"/>
+                        <Setter Target="ButtonsPanel.(Grid.Column)" Value="0"/>
+                        <Setter Target="ButtonsPanel.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="ButtonsPanel.Orientation" Value="Horizontal"/>
+                        <Setter Target="ButtonsPanel.HorizontalAlignment" Value="Center"/>
+                        <Setter Target="ButtonsPanel.VerticalAlignment" Value="Center"/>
+                        <Setter Target="GalleryScrollViewer.(Grid.Row)" Value="2"/>
+                        <Setter Target="GalleryScrollViewer.(Grid.Column)" Value="0"/>
+                        <Setter Target="GalleryScrollViewer.(Grid.ColumnSpan)" Value="2"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="WidePhone">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="400"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ButtonsPanel.(Grid.Row)" Value="1"/>
+                        <Setter Target="ButtonsPanel.(Grid.Column)" Value="0"/>
+                        <Setter Target="ButtonsPanel.(Grid.ColumnSpan)" Value="1"/>
+                        <Setter Target="ButtonsPanel.Orientation" Value="Vertical"/>
+                        <Setter Target="ButtonsPanel.HorizontalAlignment" Value="Left"/>
+                        <Setter Target="ButtonsPanel.VerticalAlignment" Value="Top"/>
+                        <Setter Target="GalleryScrollViewer.(Grid.Row)" Value="1"/>
+                        <Setter Target="GalleryScrollViewer.(Grid.Column)" Value="1"/>
+                        <Setter Target="GalleryScrollViewer.(Grid.RowSpan)" Value="2"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Desktop">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="650"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ButtonsPanel.(Grid.Row)" Value="1"/>
+                        <Setter Target="ButtonsPanel.(Grid.Column)" Value="0"/>
+                        <Setter Target="ButtonsPanel.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="ButtonsPanel.Orientation" Value="Horizontal"/>
+                        <Setter Target="ButtonsPanel.HorizontalAlignment" Value="Center"/>
+                        <Setter Target="ButtonsPanel.VerticalAlignment" Value="Center"/>
+                        <Setter Target="GalleryScrollViewer.(Grid.Row)" Value="2"/>
+                        <Setter Target="GalleryScrollViewer.(Grid.Column)" Value="0"/>
+                        <Setter Target="GalleryScrollViewer.(Grid.ColumnSpan)" Value="2"/>
+                    </VisualState.Setters>
+                </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

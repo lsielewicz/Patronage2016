@@ -5,18 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.UI.Xaml.Media.Imaging;
+using Patronage2016.Model;
 
 namespace Patronage2016.Messages
 {
     public class PassedData
     {
-        public List<BitmapImage> BitMapList { get; set; }
-        public List<String> Pathes { get; set; }
+        public List<PictureFile> PictureInformations { get; set; }
 
-        public PassedData(List<BitmapImage> bitmapList, List<String> pathes)
+        public PassedData(List<PictureFile> picInfo)
         {
-            this.BitMapList = bitmapList;
-            this.Pathes = pathes;
+            PictureInformations = picInfo;
         }
     }
 }

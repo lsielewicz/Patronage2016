@@ -8,10 +8,13 @@ using Windows.UI.Xaml.Data;
 
 namespace Patronage2016.Converters
 {
-   public class BoolToVisibilityConverter : IValueConverter
+    public class BoolToVisibilityConverter : IValueConverter
     {
        public object Convert(object value, Type targetType, object parameter, string language)
        {
+           if (value == null && !(value is bool))
+               return Visibility.Visible;
+
             return (bool)value ? Visibility.Visible : Visibility.Collapsed;
        }
 

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation.Metadata;
 using Windows.Media.Capture;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -18,22 +19,22 @@ using GalaSoft.MvvmLight.Messaging;
 using Patronage2016.Messages;
 using Patronage2016.Model;
 using Patronage2016.Strings;
-using Patronage2016.Utils;
 
 namespace Patronage2016.ViewModel
 {
-    public class MainViewModel : ViewModelBase, ISupportSharing
+    class MainViewModelPhone : ViewModelBase
     {
+
         private List<PictureFile> picturesList;
         private BitmapImage imgSource;
         private int currentBitmapIndex;
         private string informationsTextBlock;
         private Navigation.NavigationService _nav = new Navigation.NavigationService();
-        private bool progressRingActive=false;
-        public MainViewModel()
+        private bool progressRingActive = false;
+        public MainViewModelPhone()
         {
-            picturesList=new List<PictureFile>();
-            Messenger.Default.Register<CurrentIndexMessage>(this, x=>HandleIndexMessage(x.CurrentIndex));
+            picturesList = new List<PictureFile>();
+            Messenger.Default.Register<CurrentIndexMessage>(this, x => HandleIndexMessage(x.CurrentIndex));
             currentBitmapIndex = 0;
             SwitchImageCommand = new RelayCommand(SwitchImage);
             PhotoCommand = new RelayCommand(Photo);
@@ -55,29 +56,25 @@ namespace Patronage2016.ViewModel
                 var queryResult = picturesFolder.CreateFileQueryWithOptions(queryOptions);
                 var files = await queryResult.GetFilesAsync();
 
-                bool isHardwareButtonsAPIPresent = ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons");
-
                 foreach (var f in files)
                 {
                     var stream = await f.OpenReadAsync();
                     var bitmapImage = new BitmapImage();
-                    ImageProperties props = await GetImageProperties((StorageFile) f);
+
+                    await bitmapImage.SetSourceAsync(await f.GetScaledImageAsThumbnailAsync(ThumbnailMode.SingleItem,240,ThumbnailOptions.ResizeThumbnail));
+
+
+                    ImageProperties props = await GetImageProperties((StorageFile)f);
+                    //thumbnails
                     var thumbnailImage = new BitmapImage();
-                    if (isHardwareButtonsAPIPresent)
-                    {
-                        await bitmapImage.SetSourceAsync(await f.GetScaledImageAsThumbnailAsync(ThumbnailMode.SingleItem, 240,ThumbnailOptions.ResizeThumbnail));
-                        thumbnailImage.SetSource(await f.GetThumbnailAsync(ThumbnailMode.ListView, 80));
-                    }
-                    else
-                    {
-                        await bitmapImage.SetSourceAsync(stream);
-                        thumbnailImage.SetSource(await f.GetThumbnailAsync(ThumbnailMode.PicturesView));
-                    }
-                    picturesList.Add(new PictureFile(bitmapImage,thumbnailImage,props,(StorageFile) f,f.Path));
+
+                    thumbnailImage.SetSource(await f.GetThumbnailAsync(ThumbnailMode.ListView,80));
+
+                    picturesList.Add(new PictureFile(bitmapImage, thumbnailImage, props, (StorageFile)f, f.Path));
                 }
-                 if (picturesList.Count >= 1)
-                 {
-                     ImgSource = picturesList[currentBitmapIndex].FileBitmap;
+                if (picturesList.Count >= 1)
+                {
+                    ImgSource = picturesList[currentBitmapIndex].FileBitmap;
                     InformationsTextBlock = generateInformations(picturesList[currentBitmapIndex].FileProperties);
                 }
             }
@@ -112,16 +109,16 @@ namespace Patronage2016.ViewModel
             return props;
         }
 
-#endregion
+        #endregion
 
-#region Getters/Setters
+        #region Getters/Setters
 
         public bool ProgressRingActive
         {
             get
             {
                 return progressRingActive;
-                
+
             }
             set
             {
@@ -158,9 +155,9 @@ namespace Patronage2016.ViewModel
             }
         }
 
-#endregion
+        #endregion
 
-#region Buttons
+        #region Buttons
         public ICommand SwitchImageCommand { get; set; }
 
         private void SwitchImage()
@@ -179,7 +176,7 @@ namespace Patronage2016.ViewModel
 
         private string generateInformations(ImageProperties props)
         {
-            string infos = "\n"+(new LocalString("PICTURE INFORMATIONS").text);
+            string infos = "\n" + (new LocalString("PICTURE INFORMATIONS").text);
             if (!string.IsNullOrEmpty(props.CameraManufacturer))
                 infos += "\n" + (new LocalString("CameraManufacturer").text) + props.CameraManufacturer;
             if (!string.IsNullOrEmpty(props.CameraModel))
@@ -224,7 +221,7 @@ namespace Patronage2016.ViewModel
                 if (file != null)
                 {
                     string photoName = GenerateFileName("Photo") + ".png";
-                    var fileCopy = await file.CopyAsync(KnownFolders.CameraRoll, photoName,NameCollisionOption.GenerateUniqueName);
+                    var fileCopy = await file.CopyAsync(KnownFolders.CameraRoll, photoName, NameCollisionOption.GenerateUniqueName);
 
                     if (picturesList != null && picturesList.Count > 0)
                         picturesList.Clear();
@@ -249,7 +246,7 @@ namespace Patronage2016.ViewModel
 
         private void GoToPhotosList()
         {
-            _nav.Navigate(typeof (View.PhotosListView));
+            _nav.Navigate(typeof(View.PhotosListView));
             Messenger.Default.Send<PassedData>(new PassedData(picturesList));
         }
         public string GenerateFileName(string context)
@@ -268,7 +265,7 @@ namespace Patronage2016.ViewModel
         {
             DataTransferManager.ShowShareUI();
         }
-#endregion
+        #endregion
 
         public void OnShareRequested(DataRequest dataRequest)
         {
@@ -281,7 +278,5 @@ namespace Patronage2016.ViewModel
             dataRequest.Data.SetStorageItems(storageList);
         }
     }
-
-
 }
 
