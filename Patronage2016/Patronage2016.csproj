@@ -110,7 +110,6 @@
     <Compile Include="Strings\LocalString.cs" />
     <Compile Include="Utils\ISupportSharing.cs" />
     <Compile Include="Utils\SharingService.cs" />
-    <Compile Include="ViewModel\MainViewModelPhone.cs" />
     <Compile Include="ViewModel\PhotosListViewModel.cs" />
     <Compile Include="View\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
